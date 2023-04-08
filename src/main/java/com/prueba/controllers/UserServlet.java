@@ -1,5 +1,6 @@
 package com.prueba.controllers;
 
+import java.awt.desktop.UserSessionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -107,8 +108,7 @@ public class UserServlet extends HttpServlet {
 		
 		request.setAttribute("user", usuarioActual);
 		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("Usuario.jsp");
-		dispatcher.forward(request, response);
+		request.getRequestDispatcher("formuser.jsp").forward(request, response);
 		
 	}
 	
@@ -118,9 +118,12 @@ public class UserServlet extends HttpServlet {
 		String nombre = request.getParameter("nombre");
 		String email = request.getParameter("email");
 		String pais = request.getParameter("pais");
-		
-		User s = new User(id, nombre, email, pais);
-		UserDAO.delete(s);
+		User s = new User();
+		s = UserDAO.find(id);
+		s.setNombre(nombre);
+		s.setEmail(email);
+		s.setPais(pais);
+		UserDAO.update(s);
 		
 		response.sendRedirect("list");
 	}
@@ -128,8 +131,8 @@ public class UserServlet extends HttpServlet {
 	private void eliminarUsuario(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, SQLException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
-		
-		UserDAO.delete(new User(id));
+		User s = UserDAO.find(id);
+		UserDAO.delete(s);
 		
 		response.sendRedirect("list");
 	}
